@@ -1,0 +1,281 @@
+---
+- name: Install and configure Nginx on AlmaLinux VM
+  hosts: all
+  become: yes
+  gather_facts: yes
+  
+  # Disable SSH host key checking
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+  
+  tasks:
+    - name: Update package cache
+      dnf:
+        update_cache: yes
+      register: dnf_update
+    
+    - name: Display update status
+      debug:
+        msg: "Package cache updated successfully"
+    
+    - name: Install Nginx
+      dnf:
+        name: nginx
+        state: present
+      register: nginx_install
+    
+    - name: Display Nginx installation status
+      debug:
+        msg: "Nginx installed successfully"
+      when: nginx_install.changed
+    
+    - name: Create custom directory for website
+      file:
+        path: /var/www/html
+        state: directory
+        owner: nginx
+        group: nginx
+        mode: '0755'
+    
+    - name: Create custom index.html with VM information
+      copy:
+        content: |
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Welcome to {{ ansible_hostname }}</title>
+              <style>
+                  * {
+                      margin: 0;
+                      padding: 0;
+                      box-sizing: border-box;
+                  }
+                  
+                  body {
+                      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      min-height: 100vh;
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                      color: white;
+                  }
+                  
+                  .container {
+                      background: rgba(0, 0, 0, 0.7);
+                      backdrop-filter: blur(10px);
+                      border-radius: 20px;
+                      padding: 40px;
+                      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                      text-align: center;
+                      max-width: 600px;
+                      margin: 20px;
+                  }
+                  
+                  h1 {
+                      font-size: 48px;
+                      margin-bottom: 20px;
+                      animation: fadeIn 1s ease-in;
+                  }
+                  
+                  .server-icon {
+                      font-size: 80px;
+                      margin-bottom: 20px;
+                  }
+                  
+                  .info-box {
+                      background: rgba(255, 255, 255, 0.1);
+                      border-radius: 10px;
+                      padding: 20px;
+                      margin: 20px 0;
+                      text-align: left;
+                  }
+                  
+                  .info-item {
+                      margin: 10px 0;
+                      font-size: 16px;
+                  }
+                  
+                  .info-label {
+                      font-weight: bold;
+                      color: #ffd700;
+                      display: inline-block;
+                      width: 120px;
+                  }
+                  
+                  .info-value {
+                      color: white;
+                  }
+                  
+                  .success-badge {
+                      background: #4CAF50;
+                      color: white;
+                      padding: 5px 15px;
+                      border-radius: 20px;
+                      display: inline-block;
+                      margin-top: 20px;
+                      font-size: 14px;
+                  }
+                  
+                  @keyframes fadeIn {
+                      from {
+                          opacity: 0;
+                          transform: translateY(-20px);
+                      }
+                      to {
+                          opacity: 1;
+                          transform: translateY(0);
+                      }
+                  }
+                  
+                  @keyframes pulse {
+                      0%, 100% {
+                          transform: scale(1);
+                      }
+                      50% {
+                          transform: scale(1.05);
+                      }
+                  }
+                  
+                  .nginx-logo {
+                      animation: pulse 2s infinite;
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <div class="server-icon">🚀</div>
+                  <h1>Welcome to <span class="nginx-logo">{{ ansible_hostname }}</span></h1>
+                  
+                  <div class="info-box">
+                      <div class="info-item">
+                          <span class="info-label">Hostname:</span>
+                          <span class="info-value">{{ ansible_hostname }}</span>
+                      </div>
+                      <div class="info-item">
+                          <span class="info-label">IP Address:</span>
+                          <span class="info-value">{{ ansible_default_ipv4.address }}</span>
+                      </div>
+                      <div class="info-item">
+                          <span class="info-label">OS Version:</span>
+                          <span class="info-value">{{ ansible_distribution }} {{ ansible_distribution_version }}</span>
+                      </div>
+                      <div class="info-item">
+                          <span class="info-label">Kernel:</span>
+                          <span class="info-value">{{ ansible_kernel }}</span>
+                      </div>
+                      <div class="info-item">
+                          <span class="info-label">CPU Cores:</span>
+                          <span class="info-value">{{ ansible_processor_cores }}</span>
+                      </div>
+                      <div class="info-item">
+                          <span class="info-label">Memory:</span>
+                          <span class="info-value">{{ (ansible_memtotal_mb / 1024) | round(1) }} GB</span>
+                      </div>
+                      <div class="info-item">
+                          <span class="info-label">Provisioned:</span>
+                          <span class="info-value">{{ ansible_date_time.date }} {{ ansible_date_time.time }}</span>
+                      </div>
+                  </div>
+                  
+                  <div class="success-badge">
+                      ✅ Provisioned by Terraform + Ansible
+                  </div>
+                  
+                  <div style="margin-top: 20px; font-size: 12px; opacity: 0.8;">
+                      <p>Powered by Nginx on AlmaLinux 9</p>
+                      <p>Infrastructure as Code</p>
+                  </div>
+              </div>
+          </body>
+          </html>
+        dest: /usr/share/nginx/html/index.html
+        owner: nginx
+        group: nginx
+        mode: '0644'
+    
+    - name: Configure Nginx to use custom index
+      template:
+        src: /usr/share/nginx/html/index.html
+        dest: /usr/share/nginx/html/index.html
+        force: no
+    
+    - name: Start and enable Nginx service
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+      register: nginx_service
+    
+    - name: Display Nginx service status
+      debug:
+        msg: "Nginx service started and enabled"
+      when: nginx_service.changed
+    
+    - name: Check if firewalld is running
+      command: systemctl is-active firewalld
+      register: firewalld_status
+      failed_when: false
+      changed_when: false
+    
+    - name: Allow HTTP in firewall
+      firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+        immediate: yes
+      when: firewalld_status.rc == 0
+      register: firewall_config
+    
+    - name: Display firewall status
+      debug:
+        msg: "Firewall configured to allow HTTP traffic"
+      when: firewall_config.changed
+    
+    - name: Test Nginx is responding on localhost
+      uri:
+        url: http://localhost
+        return_content: yes
+        status_code: 200
+      register: nginx_test
+      until: nginx_test.status == 200
+      retries: 10
+      delay: 3
+    
+    - name: Display success message
+      debug:
+        msg: |
+          ╔══════════════════════════════════════════════════════════════╗
+          ║                    ✅ DEPLOYMENT SUCCESSFUL ✅               ║
+          ╠══════════════════════════════════════════════════════════════╣
+          ║  Nginx has been successfully installed and configured!       ║
+          ║                                                              ║
+          ║  🌐 Access your website at: http://{{ ansible_default_ipv4.address }}  ║
+          ║  🔧 SSH into the VM: ssh root@{{ ansible_default_ipv4.address }}       ║
+          ║  📁 Document root: /usr/share/nginx/html                     ║
+          ║                                                              ║
+          ║  🚀 This VM was provisioned with:                            ║
+          ║     • Terraform for infrastructure                           ║
+          ║     • Ansible for configuration management                   ║
+          ║     • VMware vSphere for virtualization                      ║
+          ║                                                              ║
+          ║  📊 System Information:                                      ║
+          ║     • Hostname: {{ ansible_hostname }}                                ║
+          ║     • OS: {{ ansible_distribution }} {{ ansible_distribution_version }}    ║
+          ║     • Kernel: {{ ansible_kernel }}                                    ║
+          ║     • CPU: {{ ansible_processor_cores }} cores                         ║
+          ║     • Memory: {{ (ansible_memtotal_mb / 1024) | round(1) }} GB                 ║
+          ╚══════════════════════════════════════════════════════════════╝
+    
+    - name: Create status file
+      copy:
+        content: |
+          Deployment completed at {{ ansible_date_time.iso8601 }}
+          VM Name: {{ ansible_hostname }}
+          IP Address: {{ ansible_default_ipv4.address }}
+          Nginx Status: Running
+          Access URL: http://{{ ansible_default_ipv4.address }}
+        dest: /root/deployment_status.txt
+        mode: '0644'
