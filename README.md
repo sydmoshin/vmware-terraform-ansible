@@ -1,136 +1,244 @@
-🚀 VMware vCenter Automation Platform (Terraform + Ansible)
+🚀 VMware vCenter Automation Platform
+Terraform + Ansible Infrastructure Automation
+End-to-end Infrastructure as Code (IaC) solution for automated virtual machine provisioning and configuration using VMware vCenter, Terraform, and Ansible.
+This project demonstrates a real-world DevOps workflow where infrastructure is provisioned with Terraform and configured automatically using Ansible — simulating enterprise-grade automation pipelines.
 
-End-to-end Infrastructure as Code (IaC) solution for automated virtual machine provisioning and configuration on VMware vCenter.
+✨ Features
 
-This project demonstrates a real-world DevOps workflow where infrastructure is fully provisioned using Terraform and configured using Ansible, simulating enterprise-grade automation pipelines.
 
-✨ Overview
+🏗️ Automated VM provisioning in VMware vCenter
 
-This platform automates the entire VM lifecycle:
 
-🏗️ Infrastructure provisioning in VMware vCenter
-⚙️ Post-provision configuration using Ansible
+⚙️ Post-provision server configuration with Ansible
+
+
 🌐 Application deployment (NGINX example)
-🧠 Fully repeatable Infrastructure as Code workflow
 
-Instead of manual VM setup, everything is driven by code.
 
-📌 Architecture
-                ┌──────────────────────┐
-                │   Terraform Code     │
-                └─────────┬────────────┘
-                          │
-                          ▼
-            ┌────────────────────────────┐
-            │   VMware vCenter (API)     │
-            └─────────┬──────────────────┘
-                      │
-          VM Provisioned (Linux Instance)
-                      │
-                      ▼
-            ┌────────────────────────────┐
-            │        Ansible            │
-            └─────────┬──────────────────┘
-                      │
-                      ▼
-        Configuration (NGINX / Services)
+🔁 Fully repeatable Infrastructure as Code workflow
+
+
+🔐 Secure credential handling practices
+
+
+📦 Modular and scalable project structure
+
+
+🧠 Real-world DevOps automation design
+
+
+
+📌 Overview
+Instead of manually creating and configuring virtual machines, this platform automates the entire lifecycle through code.
+Workflow
+
+
+Terraform provisions infrastructure in VMware vCenter
+
+
+VM details and outputs are generated
+
+
+Ansible connects to the VM via SSH
+
+
+Required services and applications are installed automatically
+
+
+
+🏗️ Architecture
+                ┌──────────────────────┐                │   Terraform Code     │                └─────────┬────────────┘                          │                          ▼            ┌────────────────────────────┐            │   VMware vCenter (API)     │            └─────────┬──────────────────┘                      │          VM Provisioned (Linux Instance)                      │                      ▼            ┌────────────────────────────┐            │         Ansible            │            └─────────┬──────────────────┘                      │                      ▼        Configuration (NGINX / Services)
+
 🧰 Tech Stack
-Layer	Technology
-Infrastructure	Terraform
-Configuration	Ansible
-Virtualization	VMware vCenter
-Automation	Bash Scripts
-OS	Linux
+LayerTechnologyInfrastructureTerraformConfiguration ManagementAnsibleVirtualization PlatformVMware vCenterAutomationBash ScriptsOperating SystemLinux
+
 📁 Project Structure
-.
-├── ansible/
-│   ├── inventory/
-│   ├── playbooks/
-│   │   └── install-nginx.yml
-│   └── templates/
-│
-├── terraform/
-│   ├── main.tf
-│   ├── variables.tf
-│   ├── terraform.tfvars
-│   ├── templates/
-│   └── scripts/
-│
-├── scripts/
-│   └── vm-manager.sh
-│
-├── manage.sh
-└── README.md
+.├── ansible/│   ├── inventory/│   ├── playbooks/│   │   └── install-nginx.yml│   └── templates/│├── terraform/│   ├── main.tf│   ├── variables.tf│   ├── terraform.tfvars│   ├── templates/│   └── scripts/│├── scripts/│   └── vm-manager.sh│├── manage.sh└── README.md
+
 ⚙️ How It Works
 1️⃣ Provision Infrastructure
-
-Terraform connects to VMware vCenter and creates a virtual machine based on predefined configuration.
+Terraform connects to VMware vCenter and provisions a virtual machine using predefined configurations.
 
 2️⃣ Retrieve Outputs
+Terraform generates outputs such as:
 
-VM details (IP, hostname, etc.) are generated after provisioning.
 
-3️⃣ Configure System
+VM IP address
 
-Ansible connects via SSH and configures the VM automatically.
 
-4️⃣ Deploy Application
+Hostname
 
-Example: NGINX web server is installed and started.
+
+Network details
+
+
+Resource information
+
+
+
+3️⃣ Configure the System
+Ansible connects to the newly created VM over SSH and performs automated configuration tasks.
+
+4️⃣ Deploy Applications
+Example deployment included:
+
+
+🌐 NGINX Web Server
+
+
 
 🚀 Getting Started
-🔹 Clone Repository
-git clone https://github.com/YOUR_USERNAME/vmware-terraform-ansible.git
-cd vmware-terraform-ansible
+🔹 Clone the Repository
+git clone https://github.com/YOUR_USERNAME/vmware-terraform-ansible.gitcd vmware-terraform-ansible
+
 🔹 Configure Terraform Variables
-
-Edit:
-
+Edit the following file:
 terraform/terraform.tfvars
+Add your:
 
-Add your vCenter credentials and VM configuration.
+
+VMware vCenter credentials
+
+
+Datacenter configuration
+
+
+VM specifications
+
+
+Network settings
+
+
 
 🔹 Initialize Terraform
-cd terraform
-terraform init
+cd terraformterraform init
+
 🔹 Deploy Infrastructure
 terraform apply
-🔹 Run Ansible Configuration
-cd ../ansible
-ansible-playbook -i inventory install-nginx.yml
-📸 Screenshots
-🖥️ VM Provisioned in VMware vCenter
 
-⚙️ Terraform Execution
+🔹 Run Ansible Configuration
+cd ../ansibleansible-playbook -i inventory install-nginx.yml
+
+📸 Screenshots
+Add screenshots here:
+
+
+🖥️ VMware vCenter VM Provisioning
+
+
+⚙️ Terraform Apply Execution
+
 
 🌐 NGINX Deployment
 
-🔐 Security Practices
-❌ No credentials stored in code
-❌ terraform.tfvars excluded from Git
+
+📡 SSH / Automation Workflow
+
+
+Example:
+![Terraform Apply](screenshots/terraform-apply.png)
+
+🔐 Security Best Practices
+
+
+❌ No credentials stored directly in source code
+
+
+❌ terraform.tfvars excluded from Git tracking
+
+
 ❌ Terraform state files ignored
-🔐 SSH-based secure access
+
+
+🔐 Secure SSH-based authentication
+
+
+🔐 Infrastructure managed through code and version control
+
+
+
 📈 What This Project Demonstrates
+
+
 Infrastructure as Code (IaC)
+
+
 VMware automation using APIs
-Configuration management at scale
-Separation of provisioning and configuration
-Real-world DevOps workflow design
+
+
+Configuration management with Ansible
+
+
+Automated Linux server provisioning
+
+
+Separation of provisioning and configuration workflows
+
+
+Practical enterprise-style DevOps pipelines
+
+
+
 🧠 Key Learnings
-Terraform provider integration with VMware
+
+
+Terraform provider integration with VMware vCenter
+
+
 Ansible inventory and automation workflows
-End-to-end system orchestration
-Practical DevOps pipeline design
+
+
+End-to-end infrastructure orchestration
+
+
+Automation pipeline design
+
+
+Infrastructure scalability concepts
+
+
+
 🚀 Future Improvements
-Multi-VM scaling support
-Dynamic inventory generation for Ansible
-CI/CD integration (GitHub Actions)
-Terraform module restructuring
-Cloud-init automation support
+
+
+ Multi-VM provisioning support
+
+
+ Dynamic inventory generation for Ansible
+
+
+ CI/CD integration using GitHub Actions
+
+
+ Terraform module restructuring
+
+
+ Cloud-init support
+
+
+ Automated rollback and destroy workflows
+
+
+ Monitoring and logging integration
+
+
+
 👨‍💻 Author
+Built as a hands-on DevOps automation project focused on real-world infrastructure provisioning and configuration workflows.
 
-Built as a hands-on DevOps automation project focusing on real-world infrastructure workflows.
+⭐ Support
+If you found this project useful:
 
-⭐ If you like this project
 
-Feel free to ⭐ the repository and connect.
+⭐ Star the repository
+
+
+🍴 Fork the project
+
+
+🔗 Connect and contribute
+
+
+
+📜 License
+This project is open-source and available under the MIT License.
