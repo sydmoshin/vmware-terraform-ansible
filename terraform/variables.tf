@@ -1,5 +1,5 @@
 variable "vcenter_server" {
-  default = "vcenter80-hp800g2.corp.mohtel.com"
+  default = "vcenter80-hp800g2.corp.local"
 }
 
 variable "vcenter_username" {
@@ -8,7 +8,7 @@ variable "vcenter_username" {
 
 variable "vcenter_password" {
   sensitive = true
-  default = "Wajed2moh#"
+  default = "$NoName#"
 }
 
 variable "datacenter" {
@@ -49,12 +49,12 @@ variable "disk_size" {
 }
 
 variable "domain" {
-  default = "corp.mohtel.com"
+  default = "corp.corp.local"
 }
 
 variable "root_password" {
   description = "Root password for the VM"
   type = string
   sensitive = true
-  default = "wajed2moh"
+  default = "$NoName#"
 }
